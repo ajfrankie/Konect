@@ -1,0 +1,27 @@
+.todo-controls img {
+    width: 20px;
+    height: 20px;
+}
+
+.todo-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.todo-list li.done {
+    text-decoration: line-through;
+}
+
+.todo-list .toggle {
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.todo-list .icon-edit,
+.todo-list .icon-delete {
+    cursor: pointer;
+    margin-left: 10px;
+}
