@@ -33,7 +33,21 @@
                 <div class="col-lg-8 mb-5 mb-lg-0">
                     <div class="blog_left_sidebar">
 
-                        @foreach($posts as $post)
+                        <!-- Search Form -->
+                        <form action="{{ route('posts.search') }}" method="GET" class="mb-4">
+                            <div class="input-group">
+                                <input 
+                                    type="text" 
+                                    name="query" 
+                                    class="form-control" 
+                                    placeholder="Search posts by title..." 
+                                    value="{{ request('query') }}"
+                                >
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                        </form>
+
+                        @forelse($posts as $post)
                         <article class="blog_item">
                             <div class="blog_item_img">
                                 <img class="card-img rounded-0" style="height:600px; width:600px;" src="{{ Storage::url($post->image) }}" alt="Post Image">
@@ -45,9 +59,9 @@
 
                             <div class="blog_details">
                                 <a class="d-inline-block" href="{{ route('posts.show', $post->id) }}">
-                                    <h2>{{ $post->subject }}</h2>
+                                    <h2>{{ $post->title }}</h2>
                                 </a>
-                                <p>{{ Str::limit($post->Content) }}</p>
+                                <p>{{ Str::limit($post->content, 100) }}</p>
                                 <ul class="blog-info-link">
                                     <li><a href="{{ route('posts.edit', $post->id) }}"><i class="far fa-user"></i>Edit</a></li>
                                     <li>
@@ -63,7 +77,9 @@
                                 </ul>
                             </div>
                         </article>
-                        @endforeach
+                        @empty
+                        <p>No posts found matching your search criteria.</p>
+                        @endforelse
 
                         <nav class="blog-pagination justify-content-center d-flex">
                             <ul class="pagination">

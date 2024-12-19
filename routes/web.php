@@ -17,39 +17,41 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+Route::view('/', 'index')->name('home');
 
-Route::view('/', 'index');
+// Authentication 
+Route::view('login', 'login')->name('login');
+Route::post('authenticate', [LoginController::class, 'authenticate'])->name('authenticate');
+Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
-//login
-Route::view('login', 'login');
-Route::post('authenticate', [LoginController::class, ('authenticate')])->name('authenticate');;
-Route::get('logout', [LoginController::class, 'logout']);
+// Registration 
+Route::view('registration', 'registration')->name('registration');
+Route::post('/store', [RegisterController::class, 'store'])->name('registration.store');
 
-//registration
-Route::view('registration', 'registration');
-Route::post('/store', [RegisterController::class, 'store']);
-Route::get('/', function () {
-    return view('index');
-})->name('index');
-
-
-//blog
-Route::view('blog', 'blog');
-// In your routes/web.php file
+// Blog 
 Route::get('/blog', [PostController::class, 'index'])->name('blog');
 
 
-//postblog
-Route::view('post', 'post');
-Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+Route::middleware(['auth'])->group(function () {
+    // Create 
+    Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+
+    // View 
+    Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+
+    // Edit 
+    Route::get('/posts/{id}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
+
+    // Delete 
+    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+});
+
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404); // Ensure a 404 page exists in resources/views/errors/404.blade.php
+});
 
 
-// Route to display the blog posts
-Route::get('/posts/create', [PostController::class, 'create']);
-Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
-Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
-Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
-Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
-Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
-Route::get('/posts/{id}/edit', [PostController::class, 'edit'])->name('posts.edit');
-Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
+//search
+Route::get('/posts/search', [PostController::class, 'search'])->name('posts.search');
